@@ -1,6 +1,6 @@
 
-##1 State
-##2 Derivations
+## 1 状态State
+## 2 衍生和计算值 Derivations
 	* Ther user inteface
 	* Derived data, such as the number of todos left
 	* Backend integrations like sending changes to the server.
@@ -9,7 +9,7 @@ two kinds of derivations
 	* Reactions
 
 
-## Illustration
+## 3.show the code Illustration
 ```js
 import {observable, autorun} from 'mobx'
 
