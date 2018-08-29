@@ -1,4 +1,4 @@
-## define your state and make it observable
+### 定义你的状态并且使其可观察
 ```js
 import {observable} from 'mobx';
 
@@ -6,8 +6,7 @@ var appState = observable({
 	timer: 0
 })
 ```
-
-## Create a view that respond to changes in the state
+### 创建视图响应状态变化
 ```js
 import {observer} from 'mobx-react'
 
@@ -25,13 +24,12 @@ class TimerView extends React.Component{
 		this.props.appState.resetTimer();
 	}
 }
+ReactDOM.render(<TimerView appState={appState}/>, document);
 ```
 
-ReactDOM.render(<TimerView appState={appState}/>, document);
+## 修改状态
 
-## Modify the State
-
-* the third thing to do is to modify the state
+* 第三件事你需要修改状态
 
 ```js
 appState.resetTimer = action(function reset(){
