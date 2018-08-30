@@ -1,4 +1,4 @@
 ## mobx-doc-zh
 
-* here is the translation for MobX doc
-* source origin is <a href="https://mobx.js.org/refguide/array.html">The MobX doc</a>
+*  MobX中文文档翻译
+* 源文档在 <a href="https://mobx.js.org/refguide/array.html">The MobX doc</a>
