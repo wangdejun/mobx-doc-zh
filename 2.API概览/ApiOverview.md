@@ -1,31 +1,4 @@
-## 核心API
-
-
-
-### 创建observable
-```observalbe(value)```
-
-使用
-* ```observable(value)```
-* ```@observable classProperty = value```
-
-Observable值可以是JS原始类型，引用类型，plain object, class instance,array and maps
-
-注意:
-1. 如果value是一个ES6Map, 一个新的ObservableMap会被返回，如果你想对入口也生效，那么使用ES6Map很不错。
-2. array
-3. object without a prototype, clone its current
-1. if value is object with a prototype, a JavaScript primitive, or function, there will no change made to the value. if you need Boxed Observable, you can do the following
-* 1. Call observable.box(value)
-* 2. @observalbe in the class defination
-* 3. Call decorate()
-* 4. Use extendObservable() to introduce properties on a class defination
-
-注意:
-* 1. to create dynamically keyed object, always use maps! Only initially existing properties on an object will be made observalbe, although new ones can be added using extendObservable 
-
-
-MobX Api Reference
+## MobX Api Reference
 Applies to MobX 4 and higher
 
 Using Mobx 3? Use this migration guide to switch gears.
@@ -54,6 +27,7 @@ The following conversion rules are applied, but can be fine-tuned by using decor
 If value is an instance of an ES6 Map: a new Observable Map will be returned. Observable maps are very useful if you don't want to react just to the change of a specific entry, but also to the addition or removal of entries.
 If value is an array, a new Observable Array will be returned.
 If value is an object without prototype or its prototype is Object.prototype, the object will be cloned and all its current properties will be made observable. See Observable Object
+
 If value is an object with a prototype, a JavaScript primitive or function, there will be no change made to the value. If you do need a Boxed Observable, you can do one of the following:
 Call observable.box(value) explicitly
 Use @observable in the class definition
@@ -66,7 +40,9 @@ These rules might seem complicated at first sight, but you will notice that in p
 <b>Some notes</b>:
 
 To use the @observable decorator, make sure that decorators are enabled in your transpiler (babel or typescript).
+
 By default making a data structure observable is infective; that means that observable is applied automatically to any value that is contained by the data structure, or will be contained by the data structure in the future. This behavior can be changed by using decorators.
+
 [MobX 4 and below] To create dynamically keyed objects, always use maps! Only initially existing properties on an object will be made observable, although new ones can be added using extendObservable.
 «observable» — «@observable»
 
@@ -125,7 +101,9 @@ The following decorators are available:
 
 observable.deep: This is the default decorator, used by any observable. It converts any assigned, non-primitive value into an observable if it isn't one yet.
 observable.ref: Disables automatic observable conversion, just creates an observable reference instead.
+
 observable.shallow: Can only be used in combination with collections. Turns any assigned collection into an collection, which is shallowly observable (instead of deep). In other words; the values inside the collection won't become observables automatically.
+
 computed: Creates a derived property, see computed
 action: Creates an action, see action
 action.bound: Creates a bound action, see action
@@ -182,7 +160,7 @@ decorate(TodoList, {
 
 For applying multiple decorators on a single property, you can pass an array of decorators. The decorators application order is from right to left.
 
-```
+```js
 import { decorate, observable } from 'mobx'
 import { serializable, primitive } from 'serializr'
 import persist from 'mobx-persist'
@@ -218,6 +196,7 @@ Creates a computed property. The expression should not have side effects but ret
 There are various options that can be used to control the behavior of computed. These include:
 
 equals: (value, value) => boolean Comparison method can be used to override the default detection on when something is changed. Built-in comparers are: comparer.identity, comparer.default, comparer.structural.
+
 name: string Provide a debug name to this computed property
 requiresReaction: boolean Wait for a change in value of the tracked observables, before recomputing the derived property
 get: () => value) Override the getter for the computed property.
