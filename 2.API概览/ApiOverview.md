@@ -1,5 +1,4 @@
-## MobX Api Reference
-Applies to MobX 4 and higher
+## MobX Api 手册
 
 Using Mobx 3? Use this migration guide to switch gears.
 MobX 3 documentation
@@ -9,7 +8,7 @@ These are the most important MobX API's.
 
 Understanding observable, computed, reaction and action is enough to master MobX and use it in your applications!
 
-Creating observables
+## Creating observables
 observable(value)
 Usage:
 
@@ -50,15 +49,11 @@ By default making a data structure observable is infective; that means that obse
 
 observable can also be used as property decorator. It requires decorators to be enabled and is syntactic sugar for extendObservable(this, { property: value }).
 
-«details»
-
 ```observable.box(value, options?)```
 
 Creates an observable box that stores an observable reference to a value. Use get() to get the current value of the box, and set() to update it. This is the foundation on which all other observables are built, but in practice you will use it rarely.
 
 Normal boxes will automatically try to turn any new value into an observable if it isn't already. Use the {deep: false} option to disable this behavior.
-
-«details»
 
 ```observable.object(value,decorators?, options?)```
 
@@ -66,23 +61,17 @@ Creates a clone of the provided object and makes all its properties observable. 
 
 The second argument in observable.object() can be used to fine tune the observability with decorators.
 
-«details»
-
 ```observable.array(value, options?)```
 
 Creates a new observable array based on the provided value.
 
 Use the {deep: false} option if the values in the array should not be turned into observables.
 
-«details»
-
 ```observable.map(value, options?)```
 
 Creates a new observable map based on the provided value. Use the {deep: false} option if the values in the map should not be turned into observables.
 
 Use map whenever you want to create a dynamically keyed collections and the addition / removal of keys needs to be observed. Since this uses the full-blown ES6 Map internally, you are free to use any type for the key and not limited to string keys.
-
-«details»
 
 ```extendObservable```
 
@@ -92,7 +81,6 @@ For each key/value pair in each propertyMap a (new) observable property will be 
 
 Use extendObservable(target, props, decorators?, {deep: false}) if the new properties should not be infective (that is; newly assigned values should not be turned into observables automatically). Note that extendObservable enhances existing objects, unlike observable.object which creates a new object.
 
-«details»
 
 Decorators
 Use decorators to fine tune the observability of properties defined via observable, extendObservable and observable.object. They can also control the auto-conversion rules for specific properties.
@@ -131,9 +119,9 @@ const taskStore = observable({
     addTask: action
 })
 ```
-«details»
 
 decorate
+
 Usage: decorate(object, decorators) This is a convenience method to apply observability decorators to the properties of a plain object or class instance. The second argument is an object with properties set to certain decorators.
 
 Use this if you cannot use the @decorator syntax or need more control over setting observability.
@@ -202,12 +190,12 @@ requiresReaction: boolean Wait for a change in value of the tracked observables,
 get: () => value) Override the getter for the computed property.
 set: (value) => void Override the setter for the computed property
 keepAlive: boolean Set to true to automatically keep computed values alive, rather then suspending then when there are no observers.
-«details»
+
 
 Actions
 Any application has actions. Actions are anything that modify the state.
 
-With MobX you can make it explicit in your code where your actions live by marking them. Actions helps you to structure your code better. It is advised to use them on any function that modifies observables or has side effects. action also provides useful debugging information in combination with the devtools. Note: using action is mandatory when strict mode is enabled, see enforceActions. «details»
+With MobX you can make it explicit in your code where your actions live by marking them. Actions helps you to structure your code better. It is advised to use them on any function that modifies observables or has side effects. action also provides useful debugging information in combination with the devtools. Note: using action is mandatory when strict mode is enabled, see enforceActions. 
 
 <b>Usage</b>:
 
@@ -230,18 +218,14 @@ When dealing with async actions, the code that executes in the callback is not w
 
 Note that the async function must be a generator and you must only yield to promises inside. flow gives you back a promise that you can cancel() if you want.
 
-import { configure } from 'mobx';
-
-// don't allow state modifications outside actions
-
 ```js
+import { configure } from 'mobx';
+// don't allow state modifications outside actions
 configure({enforceActions: true});
 
 class Store {
     @observable githubProjects = [];
     @observable state = "pending"; // "pending" / "done" / "error"
-
-
     fetchProjects = flow(function* fetchProjects() { // <- note the star, this a generator function!
         this.githubProjects = [];
         this.state = "pending";
@@ -287,24 +271,25 @@ const count = mobx.flow(async function*() {
 const res = await count() // 6
 ```
 
-Reactions & Derivations
+### Reactions & Derivations
+
 Computed values are values that react automatically to state changes. Reactions are side effects that react automatically to state changes. Reactions can be used to ensure that a certain side effect (mainly I/O) is automatically executed when relevant state changes, like logging, network requests etc. The most commonly used reaction is the observer decorator for React components (see below).
 
 observer
-Can be used as higher order component around a React component. The component will then automatically re-render if any of the observables used in the render function of the component has changed. Note that observer is provided by the "mobx-react" package and not by "mobx" itself.
+Can be used as higher order component around a React component. The component will then automatically re-render if any of the observables used in the render function of the component has changed.
+注意，observer是"mobx-react"包提供的，而不是"mobx"本身提供的。
 
-«details»
-
-Usage:
-
+使用:
+```js
 observer(React.createClass({ ... }))
 observer((props, context) => ReactElement)
 observer(class MyComponent extends React.Component { ... })
 @observer class MyComponent extends React.Component { ... }
+```
+
 autorun
 Usage: autorun(() => { sideEffect }, options). Autorun runs the provided sideEffect and tracks which observable state is accessed while running the side effect. Whenever one of the used observables is changed in the future, the same sideEffect will be run again. Returns a disposer function to cancel the side effect.
 
-«details»
 
 options
 
@@ -321,8 +306,6 @@ when returns a disposer to prematurely cancel the whole thing.
 
 If no effect function is passed to when, it will return a promise that can be awaited until the condition settles.
 
-«details».
-
 options
 
 name?: string: A name for easier identification and debugging
@@ -330,8 +313,6 @@ onError?: (error) => void: error handler that will be triggered if the predicate
 timeout: number a timeout in milliseconds, after which the onError handler will be triggered to signal the condition not being met within a certain time
 reaction
 Usage: reaction(() => data, data => { sideEffect }, options). A variation on autorun that gives more fine-grained control on which observables that will be tracked. It takes two function, the first one is tracked and returns data that is used as input for the second one, the side effect. Unlike autorun the side effect won't be run initially, and any observables that are accessed while executing the side effect will not be tracked. The side effect can be debounced, just like autorunAsync.
-
-«details»
 
 options
 
@@ -351,12 +332,16 @@ Provider (mobx-react package)
 Can be used to pass stores to child components using React's context mechanism. See the mobx-react docs.
 
 inject (mobx-react package)
-Higher order component and counterpart of Provider. Can be used to pick stores from React's context and pass it as props to the target component. Usage:
+Higher order component and counterpart of Provider. Can be used to pick stores from React's context and pass it as props to the target component. 
 
+##### Usage:
+```
 inject("store1", "store2")(observer(MyComponent))
 @inject("store1", "store2") @observer MyComponent
 @inject((stores, props, context) => props) @observer MyComponent
 @observer(["store1", "store2"]) MyComponent is a shorthand for the the @inject() @observer combo.
+```
+
 toJS
 Usage: toJS(observableDataStructure, options?). Converts observable data structures back to plain javascript objects, ignoring computed values.
 
@@ -364,12 +349,12 @@ The options include:
 
 detectCycles: boolean: Checks for cyclical references in the observable data-structure. Defaults to true.
 exportMapsAsObjects: boolean: Treats ES6 Maps as regular objects for export. Defaults to true
-«details».
+.
 
 isObservable and isObservableProp
 Usage: isObservable(thing) or isObservableProp(thing, property?). Returns true if the given thing, or the property of the given thing is observable. Works for all observables, computed values and disposer functions of reactions.
 
-«details»
+
 
 isObservableObject|Array|Map and isBoxedObservable
 Usage: isObservableObject(thing), isObservableArray(thing), isObservableMap(thing), isBoxedObservable(thing). Returns true if.., well, do the math.
@@ -386,12 +371,12 @@ Usage: isComputed(thing) or isComputedProp(thing, property?). Returns true if th
 intercept
 Usage: intercept(object, property?, interceptor). Api that can be used to intercept changes before they are applied to an observable api. Useful for validation, normalization or cancellation.
 
-«details»
+
 
 observe
 Usage: observe(object, property?, listener, fireImmediately = false) Low-level api that can be used to observe a single observable value.
 
-«details»
+
 
 onBecomeObserved and onBecomeUnobserved
 Usage: onBecomeObserved(observable, property?, listener: () => void): (() => void) and onBecomeUnobserved(observable, property?, listener: () => void): (() => void)
@@ -405,19 +390,16 @@ export class City {
     @observable location
     @observable temperature
     interval
-
     constructor(location) {
         this.location = location
         // only start data fetching if temperature is actually used!
         onBecomeObserved(this, 'temperature', this.resume)
         onBecomeUnobserved(this, 'temperature', this.suspend)
     }
-
     resume = () => {
         log(`Resuming ${this.location}`)
         this.interval = setInterval(() => this.fetchTemperature(), 5000)
     }
-
     suspend = () => {
         log(`Suspending ${this.location}`)
         this.temperature = undefined
@@ -454,6 +436,7 @@ There may be times when you want to catch those errors, for example when unit te
 
 configure({ disableErrorBoundaries: true });
 Please note that MobX won't recover from errors when using this configuration. For that reason, you may need to use _resetGlobalState after each exception. Example:
+
 ```js
 configure({ disableErrorBoundaries: true })
 
@@ -483,6 +466,7 @@ Without this options, if multiple MobX instances are active, the internal state 
 configure({ isolateGlobalState: true });
 reactionScheduler: (f: () => void) => void
 Sets a new function that executes all MobX reactions. By default reactionScheduler just runs the f reaction without any other behavior. This can be useful for basic debugging, or slowing down reactions to visualize application updates.
+
 ```js
 configure({
     reactionScheduler: (f): void => {
@@ -490,7 +474,6 @@ configure({
         setTimeout(f, 100);
     }
 });
-
 ```
 
 Direct Observable manipulation
@@ -509,7 +492,7 @@ The following api's might come in handy if you want to build cool tools on top o
 "mobx-react-devtools" package
 The mobx-react-devtools is a powerful package that helps you to investigate the performance and dependencies of your react components. Also has a powerful logger utility based on spy.
 
-«details»
+
 
 trace
 Usage:
@@ -519,12 +502,10 @@ trace(Reaction object / ComputedValue object / disposer function, enterDebugger?
 trace(object, computedValuePropertyName, enterDebugger?)
 trace is a small utility that you can use inside a computed value or reaction. If it is enabled, it will start logging when the value is being invalidated, and why. If enterDebugger is set to true, and developer tools are enabled, the javascript engine will break on the point where it is triggered.
 
-«trace»
-
 spy
 Usage: spy(listener). Registers a global spy listener that listens to all events that happen in MobX. It is similar to attaching an observe listener to all observables at once, but also notifies about running (trans/re)actions and computations. Used for example by the mobx-react-devtools.
 
-«details»
+
 
 getAtom
 Usage: getAtom(thing, property?). Returns the backing Atom of a given observable object, property, reaction etc.
@@ -598,4 +579,3 @@ person.lastName = "Chesterton";
 createAtom
 Utility function that can be used to create your own observable data structures and hook them up to MobX. Used internally by all observable data types.
 
-«details»
